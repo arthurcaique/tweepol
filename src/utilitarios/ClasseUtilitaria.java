@@ -8,7 +8,7 @@ package utilitarios;
 import java.awt.Component;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import utilitarios.exceptions.ErroInternoException;
+import exceptions.ErroInternoException;
 
 /**
  *

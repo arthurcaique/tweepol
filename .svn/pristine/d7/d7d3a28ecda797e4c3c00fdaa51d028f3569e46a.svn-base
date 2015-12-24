@@ -1,0 +1,29 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package stream.control;
+
+import java.io.File;
+import stream.view.CapturaTweetsView;
+import utilitarios.ClasseUtilitaria;
+import exceptions.ErroInternoException;
+
+/**
+ *
+ * @author W8
+ */
+public class ControladorFiltroStreamView {
+
+    /**
+     * Esse método vai chamar a tela de captura de tweets
+     * @param arquivo O arquivo que serão salvos os tweets
+     * @param filtros Os filtros a serem rastreados no Twitter
+     * @throws ErroInternoException
+     */
+    public static void irParaTelaCaptura(File arquivo, String[] filtros) throws ErroInternoException {
+        CapturaTweetsView capturaView = new CapturaTweetsView(null, true, arquivo, filtros);
+        ClasseUtilitaria.abrirView(capturaView, null);
+    }
+}

@@ -7,15 +7,16 @@ package amostra;
 
 import java.util.ArrayList;
 import javax.swing.JTable;
+import tweet.Tweet;
 import utilitarios.ModeloDeTabelaAbstrato;
 
 /**
  *
- * @author W8
+ * @author Arthur
  */
 public class TableModelRotulacaoTweets extends ModeloDeTabelaAbstrato {
 
-    public String[] colunas = new String[]{"Nº", "Tweet", "Positivo"};
+    public String[] colunas = new String[]{"Id", "Tweet", "Positivo", "Negativo"};
 
     public TableModelRotulacaoTweets(JTable tabela) {
         super(tabela);
@@ -28,14 +29,16 @@ public class TableModelRotulacaoTweets extends ModeloDeTabelaAbstrato {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        TweetAmostra tweet = (TweetAmostra) this.lista.get(rowIndex);
+        Tweet tweet = (Tweet) this.lista.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return rowIndex + 1;
+                return tweet.getId();
             case 1:
-                return tweet.getTexto();
+                return tweet.getTextoSemStemm();
             case 2:
-                return tweet.isPositivo();
+                return tweet.getPolaridade() == Tweet.Polaridade.POSITIVA;
+            case 3:
+                return tweet.getPolaridade() == Tweet.Polaridade.NEGATIVA;
             default:
                 throw new IndexOutOfBoundsException();
         }
@@ -43,13 +46,15 @@ public class TableModelRotulacaoTweets extends ModeloDeTabelaAbstrato {
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        TweetAmostra tweet = (TweetAmostra) this.lista.get(rowIndex);
+        Tweet tweet = (Tweet) this.lista.get(rowIndex);
         switch (columnIndex) {
-            case 1:
-                tweet.setTexto((String) value);
-                break;
             case 2:
-                tweet.setPositivo((Boolean) value);
+                tweet.setPolaridade(((Boolean) value) == true ? Tweet.Polaridade.POSITIVA : Tweet.Polaridade.NEGATIVA);
+                fireTableDataChanged();
+                break;
+            case 3:
+                tweet.setPolaridade(((Boolean) value) == true ? Tweet.Polaridade.NEGATIVA : Tweet.Polaridade.POSITIVA);
+                fireTableDataChanged();
                 break;
             default:
                 throw new IndexOutOfBoundsException();
@@ -61,32 +66,58 @@ public class TableModelRotulacaoTweets extends ModeloDeTabelaAbstrato {
         return this.colunas[indice];
     }
 
-    public void addRow(String texto, boolean positivo) {
-        this.lista.add(new TweetAmostra(texto, positivo));
+    public void addRow(Tweet tweet) {
+        this.lista.add(tweet);
         int ultimoIndice = getRowCount() - 1;
         fireTableRowsInserted(ultimoIndice, ultimoIndice);
     }
 
-    public TweetAmostra getTweetAmostra(int indice) {
-        return (TweetAmostra) this.lista.get(indice);
+    public Tweet getTweet(int indice) {
+        return (Tweet) this.lista.get(indice);
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return column == 2;
+        return column == 2 || column == 3;
     }
 
     @Override
     public Class getColumnClass(int indice) {
-        if (indice == 2) {
+        if (indice == 2 || indice == 3) {
             return Boolean.class;
         } else {
             return String.class;
         }
     }
 
-    public ArrayList<TweetAmostra> getTweetAmostras() {
+    public ArrayList<Tweet> getTweets() {
         return this.lista;
+    }
+
+    public int getPositivos() {
+        int i = 0;
+        for (Tweet tweet : (ArrayList<Tweet>) lista) {
+            i = tweet.getPolaridade() == Tweet.Polaridade.POSITIVA ? i + 1 : i;
+        }
+        return i;
+    }
+
+    public int getNegativos() {
+        int i = 0;
+        for (Tweet tweet : (ArrayList<Tweet>) lista) {
+            i = tweet.getPolaridade() == Tweet.Polaridade.NEGATIVA ? i + 1 : i;
+        }
+        return i;
+    }
+
+    public ArrayList<Tweet> getNaoPolarizados() {
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        for (Tweet tweet : (ArrayList<Tweet>) this.lista) {
+            if (tweet.getPolaridade() == Tweet.Polaridade.NAO_INFORMADA) {
+                tweets.add(tweet);
+            }
+        }
+        return tweets;
     }
 
 }

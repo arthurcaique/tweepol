@@ -6,15 +6,23 @@
 package teste;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import ptstemmer.Stemmer;
+import ptstemmer.Stemmer.StemmerType;
+import ptstemmer.exceptions.PTStemmerException;
+import ptstemmer.support.PTStemmerUtilities;
 
 /**
  *
- * @author W8
+ * @author Arthur
  */
 public class NewMain {
 
@@ -22,7 +30,19 @@ public class NewMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        gerarProblems();
+        try {
+            Stemmer stemmer = Stemmer.StemmerFactory(StemmerType.PORTER);
+            stemmer.enableCaching(1000);
+            String a = "";
+            String[] phraseStems = stemmer.getPhraseStems("caçar caça caçador");
+            for (String phraseStem : phraseStems) {
+                a = a.concat(phraseStem+" ");
+            }
+            System.out.println(a);
+//            gerarProblems();
+        } catch (PTStemmerException ex) {
+            Logger.getLogger(NewMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static void gerarProblems() {
@@ -76,7 +96,4 @@ public class NewMain {
         return a;
     }
 
-    public void testar() {
-
-    }
 }

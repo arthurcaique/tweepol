@@ -1,0 +1,50 @@
+{"normal":"mais","abv":"+"}
+{"normal":"igual","abv":"="}
+{"normal":"não","abv":"n"}
+{"normal":"ninguém","abv":"ngm"}
+{"normal":"o que","abv":"oq"}
+{"normal":"para","abv":"p\/"}
+{"normal":"para","abv":"p"}
+{"normal":"porque","abv":"pq"}
+{"normal":"que","abv":"q"}
+{"normal":"quem","abv":"qm"}
+{"normal":"também","abv":"tb"}
+{"normal":"também","abv":"tbm"}
+{"normal":"você","abv":"vc"}
+{"normal":"vocês","abv":"vcs"}
+{"normal":"de","abv":"d"}
+{"normal":"fazer","abv":"fz"}
+{"normal":"nada","abv":"nd"}
+{"normal":"risos","abv":"lol"}
+{"normal":"por favor","abv":"pf"}
+{"normal":"pelo amor de deus","abv":"plmdd"}
+{"normal":"verdade","abv":"vdd"}
+{"normal":"com","abv":"c"}
+{"normal":"hoje","abv":"hj"}
+{"normal":"pois é","abv":"psé"}
+{"normal":"pois é","abv":"pse"}
+{"normal":"comigo","abv":"cmg"}
+{"normal":"contigo","abv":"ctg"}
+{"normal":"vocês","abv":"ces"}
+{"normal":"vocês","abv":"cês"}
+{"normal":"quando","abv":"qnd"}
+{"normal":"quando","abv":"qndo"}
+{"normal":"por favor","abv":"pfvr"}
+{"normal":"meu deus","abv":"mds"}
+{"normal":"todo","abv":"td"}
+{"normal":"agora","abv":"agr"}
+{"normal":"mensagem","abv":"msg"}
+{"normal":"quanto","abv":"qto"}
+{"normal":"quando","abv":"qdo"}
+{"normal":"caralho","abv":"krl"}
+{"normal":"hoje","abv":"hje"}
+{"normal":"cara","abv":"kra"}
+{"normal":"timeline","abv":"tl"}
+{"normal":"moleque","abv":"mlk"}
+{"normal":"brasil","abv":"br"}
+{"normal":"mesmo","abv":"msm"}
+{"normal":"depois","abv":"dps"}
+{"normal":"quanto","abv":"qt"}
+{"normal":"quantos","abv":"qts"}
+{"normal":"mermo","abv":"mrm"}
+{"normal":"socorro","abv":"scrr"}

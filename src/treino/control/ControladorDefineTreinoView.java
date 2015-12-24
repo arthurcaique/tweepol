@@ -1,0 +1,151 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package treino.control;
+
+import exceptions.DadoInvalidoException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import libsvm.svm_parameter;
+import tweet.Tweet;
+import exceptions.ErroInternoException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import libsvm.svm;
+import libsvm.svm_model;
+import main.Fachada;
+import main.RotulacaoAmostra;
+import treino.view.DefineTreinoView;
+import utilitarios.ArquivoUtils;
+import utilitarios.ClasseUtilitaria;
+
+/**
+ *
+ * @author Arthur Caique
+ */
+public class ControladorDefineTreinoView {
+
+    public static void treinar(svm_parameter param, ArrayList<Tweet> treino, ArrayList<Tweet> teste)
+            throws ErroInternoException, ArquivoUtils.ArquivoNaoSalvoException, DadoInvalidoException {
+        try {
+            if (treino.isEmpty()) {
+                throw new DadoInvalidoException("Conjunto de treino não informado!");
+            } else {
+                if (!teste.isEmpty()) {
+                    File arquivoTeste = ArquivoUtils.abrirFileChooserSalvarArquivo(".t");
+                    Fachada.getINSTANCIA().inserirTweets(arquivoTeste, teste);
+                }
+                File arqTreino = ArquivoUtils.abrirFileChooserSalvarArquivo(".train");
+                Fachada.getINSTANCIA().inserirTweets(arqTreino, treino);
+                ControladorTreino.treinar(param, treino, arqTreino.getParent());
+                Runtime.getRuntime().exec("explorer " + arqTreino.getParent());
+            }
+        } catch (IOException ex) {
+            throw new ErroInternoException(ex);
+        }
+    }
+
+    public static void abrirTelaTreino(ArrayList<Tweet> tweets) throws ErroInternoException, DadoInvalidoException {
+        DefineTreinoView dtView = new DefineTreinoView(null, true);
+        for (Tweet tweet : tweets) {
+            if (tweet.getPolaridade() == Tweet.Polaridade.NAO_INFORMADA) {
+                throw new DadoInvalidoException("Há tweets não rotulados nesse arquivo!");
+            }
+        }
+        ClasseUtilitaria.abrirView(dtView, null);
+    }
+
+    public static void testarModelo() throws ErroInternoException, ArquivoUtils.ArquivoNaoSelecionadoException {
+        File arq1 = ArquivoUtils.selecionarArquivo();
+        File arq2 = ArquivoUtils.selecionarArquivo();
+        ControladorDefineTreinoView.testarModelo(arq1, arq2);
+    }
+
+    public static void testarModelo(File modelo, File conjuntoTeste) throws ErroInternoException {
+        try {
+            float conTesteSize = 0;
+            float numAcertos = 0;
+            float numPositivos = 0;
+            float numNegativos = 0;
+            float totalNeg = 0;
+            float totalPos = 0;
+            svm_model model = svm.svm_load_model(new BufferedReader(new FileReader(modelo)));
+            ArrayList<Tweet> recuperarTweets = Fachada.getINSTANCIA().recuperarTweets(conjuntoTeste);
+            for (Tweet tweet : recuperarTweets) {
+                double svm_predict = svm.svm_predict(model, RotulacaoAmostra.setarSVMNodes(tweet.getTfidf()));
+                conTesteSize++;
+                long classe = tweet.getPolaridade().getValue() != null ? tweet.getPolaridade().getValue() : 0;
+                Double valueOf = Double.valueOf(String.valueOf(classe));
+                double pos = 1;
+                if (valueOf == pos) {
+                    totalPos++;
+                } else {
+                    totalNeg++;
+                }
+                if (valueOf == svm_predict) {
+                    if (svm_predict == pos) {
+                        numPositivos++;
+                    } else {
+                        numNegativos++;
+                    }
+                    numAcertos++;
+                }
+                System.out.println("id: " + tweet.getId() + "\n Classificação:" + svm_predict + "\nRotulo:" + classe);
+            }
+            float acerto = (100 / conTesteSize) * numAcertos;
+            float acertoPos = (100 / totalPos) * numPositivos;
+            float acertoNeg = (100 / totalNeg) * numNegativos;
+            System.out.println("Porcentagem de acerto total: " + acerto);
+            System.out.println("Porcentagem de acerto positivos: " + acertoPos);
+            System.out.println("Porcentagem de acerto negativos: " + acertoNeg);
+        } catch (IOException ex) {
+            throw new ErroInternoException(ex);
+        } catch (DadoInvalidoException ex) {
+            Logger.getLogger(ControladorDefineTreinoView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static float testarModelo(svm_model modelo, List<Tweet> teste) throws ErroInternoException {
+        float conTesteSize = 0;
+        float numAcertos = 0;
+        float numPositivos = 0;
+        float numNegativos = 0;
+        float totalNeg = 0;
+        float totalPos = 0;
+        for (Tweet tweet : teste) {
+            double svm_predict = svm.svm_predict(modelo, RotulacaoAmostra.setarSVMNodes(tweet.getTfidf()));
+            conTesteSize++;
+            long classe = tweet.getPolaridade().getValue() != null ? tweet.getPolaridade().getValue() : 0;
+            Double valueOf = Double.valueOf(String.valueOf(classe));
+            double pos = 1;
+            if (valueOf == pos) {
+                totalPos++;
+            } else {
+                totalNeg++;
+            }
+            if (valueOf == svm_predict) {
+                if (svm_predict == pos) {
+                    numPositivos++;
+                } else {
+                    numNegativos++;
+                }
+                numAcertos++;
+            }
+            System.out.println("id: " + tweet.getId() + "\n Classificação:" + svm_predict + "\nRotulo:" + classe);
+        }
+        float acerto = (100 / conTesteSize) * numAcertos;
+        float acertoPos = (100 / totalPos) * numPositivos;
+        float acertoNeg = (100 / totalNeg) * numNegativos;
+        System.out.println("Porcentagem de acerto total: " + acerto);
+        System.out.println("Porcentagem de acerto positivos: " + acertoPos);
+        System.out.println("Porcentagem de acerto negativos: " + acertoNeg);
+        return acerto;
+    }
+
+}

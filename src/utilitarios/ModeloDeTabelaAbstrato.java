@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author W8
+ * @author Arthur Caique
  */
 public abstract class ModeloDeTabelaAbstrato extends AbstractTableModel {
 

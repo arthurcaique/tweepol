@@ -1,0 +1,33 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package main;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import libsvm.svm_node;
+
+/**
+ *
+ * @author Arthur
+ */
+public class RotulacaoAmostra {
+
+    public static svm_node[] setarSVMNodes(Map<Long, BigDecimal> nodes) {
+        ArrayList<svm_node> listaNodes = new ArrayList<>();
+        svm_node[] nudes = new svm_node[]{};
+        Set<Map.Entry<Long, BigDecimal>> entrySet = nodes.entrySet();
+        for (Map.Entry<Long, BigDecimal> entry : entrySet) {
+            svm_node node = new svm_node();
+            node.index = entry.getKey().intValue();
+            node.value = entry.getValue().doubleValue();
+            listaNodes.add(node);
+        }
+        return listaNodes.toArray(nudes);
+    }
+
+}

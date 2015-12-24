@@ -1,0 +1,123 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package amostra;
+
+import java.util.ArrayList;
+import javax.swing.JTable;
+import tweet.Tweet;
+import utilitarios.ModeloDeTabelaAbstrato;
+
+/**
+ *
+ * @author Arthur
+ */
+public class TableModelRotulacaoTweets extends ModeloDeTabelaAbstrato {
+
+    public String[] colunas = new String[]{"Id", "Tweet", "Positivo", "Negativo"};
+
+    public TableModelRotulacaoTweets(JTable tabela) {
+        super(tabela);
+    }
+
+    @Override
+    public int getColumnCount() {
+        return this.colunas.length;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Tweet tweet = (Tweet) this.lista.get(rowIndex);
+        switch (columnIndex) {
+            case 0:
+                return tweet.getId();
+            case 1:
+                return tweet.getTextoSemStemm();
+            case 2:
+                return tweet.getPolaridade() == Tweet.Polaridade.POSITIVA;
+            case 3:
+                return tweet.getPolaridade() == Tweet.Polaridade.NEGATIVA;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        Tweet tweet = (Tweet) this.lista.get(rowIndex);
+        switch (columnIndex) {
+            case 2:
+                tweet.setPolaridade(((Boolean) value) == true ? Tweet.Polaridade.POSITIVA : Tweet.Polaridade.NEGATIVA);
+                fireTableDataChanged();
+                break;
+            case 3:
+                tweet.setPolaridade(((Boolean) value) == true ? Tweet.Polaridade.NEGATIVA : Tweet.Polaridade.POSITIVA);
+                fireTableDataChanged();
+                break;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
+    @Override
+    public String getColumnName(int indice) {
+        return this.colunas[indice];
+    }
+
+    public void addRow(Tweet tweet) {
+        this.lista.add(tweet);
+        int ultimoIndice = getRowCount() - 1;
+        fireTableRowsInserted(ultimoIndice, ultimoIndice);
+    }
+
+    public Tweet getTweet(int indice) {
+        return (Tweet) this.lista.get(indice);
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return column == 2 || column == 3;
+    }
+
+    @Override
+    public Class getColumnClass(int indice) {
+        if (indice == 2 || indice == 3) {
+            return Boolean.class;
+        } else {
+            return String.class;
+        }
+    }
+
+    public ArrayList<Tweet> getTweets() {
+        return this.lista;
+    }
+
+    public int getPositivos() {
+        int i = 0;
+        for (Tweet tweet : (ArrayList<Tweet>) lista) {
+            i = tweet.getPolaridade() == Tweet.Polaridade.POSITIVA ? i + 1 : i;
+        }
+        return i;
+    }
+
+    public int getNegativos() {
+        int i = 0;
+        for (Tweet tweet : (ArrayList<Tweet>) lista) {
+            i = tweet.getPolaridade() == Tweet.Polaridade.NEGATIVA ? i + 1 : i;
+        }
+        return i;
+    }
+
+    public ArrayList<Tweet> getNaoPolarizados() {
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        for (Tweet tweet : (ArrayList<Tweet>) this.lista) {
+            if (tweet.getPolaridade() == Tweet.Polaridade.NAO_INFORMADA) {
+                tweets.add(tweet);
+            }
+        }
+        return tweets;
+    }
+
+}
